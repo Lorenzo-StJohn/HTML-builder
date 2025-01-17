@@ -26,6 +26,7 @@ const finishWriting = () => {
   rl.write('The task is completed. Have a nice day!\n');
   writerStream.close();
   rl.close();
+  process.exit();
 };
 
 writerStream.addListener('open', startWriting);
