@@ -10,18 +10,36 @@ async function copyDir(fromDir, toDir) {
     const copyFiles = await fsPromises.readdir(fromDir, {
       withFileTypes: true,
     });
-    for (const file of copyFiles) {
-      console.log(file);
-      const stat = await fsPromises.stat(path.join(fromDir, file.name));
-      console.log(stat.ctime);
-    }
     const existedFiles = await fsPromises.readdir(toDir, {
       withFileTypes: true,
     });
+    const existedNames = [];
+    const copyNames = [];
+    for (const file of copyFiles) {
+      copyNames.push(file.name);
+    }
     for (const file of existedFiles) {
-      console.log(file);
-      const stat = await fsPromises.stat(path.join(toDir, file.name));
-      console.log(stat.ctime);
+      if (!copyNames.includes(file.name)) {
+        if (file.isFile()) {
+          await fsPromises.unlink(path.join(toDir, file.name));
+        } else {
+          await fsPromises.rm(path.join(toDir, file.name), {
+            recursive: true,
+          });
+        }
+      } else existedNames.push(file.name);
+    }
+    for (const file of copyFiles) {
+      if (file.isFile()) {
+        if (!existedNames.includes(file.name)) {
+          await fsPromises.copyFile(
+            path.join(fromDir, file.name),
+            path.join(toDir, file.name),
+          );
+        }
+      } else {
+        copyDir(path.join(fromDir, file.name), path.join(toDir, file.name));
+      }
     }
   } catch (err) {
     console.error(err);
