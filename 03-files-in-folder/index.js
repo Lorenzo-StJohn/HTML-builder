@@ -14,7 +14,7 @@ async function findFiles() {
         fileExtension = fileExtension.substring(1);
         const stat = await fsPromises.stat(path.join(secretFolder, file.name));
         const fileSize = stat.size;
-        console.log(`${fileName}-${fileExtension}-${fileSize}`);
+        console.log(`${fileName} - ${fileExtension} - ${fileSize}b`);
       }
     }
   } catch (err) {
