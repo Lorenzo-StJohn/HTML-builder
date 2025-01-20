@@ -60,7 +60,8 @@ async function build(
         const nameComponent = template.substring(start + 1, last) + '.html';
         const component = path.join(__dirname, 'components', nameComponent);
         const data = await fsPromises.readFile(component);
-        resultHTML += data;
+        resultHTML += data.toString();
+        resultHTML += '\n';
         start = -1;
       }
     }
