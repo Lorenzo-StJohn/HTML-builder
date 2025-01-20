@@ -6,7 +6,45 @@ const templateHTML = path.join(__dirname, 'template.html');
 const styles = path.join(__dirname, 'styles');
 const styleCSS = path.join(__dirname, 'project-dist', 'style.css');
 
-async function build(projectDist, templateFile, stylesFolder, styleFile) {
+const assetsDir = path.join(__dirname, 'assets');
+const newAssetsDir = path.join(__dirname, 'project-dist', 'assets');
+
+async function copyDir(fromDir, toDir) {
+  try {
+    await fsPromises.rm(toDir, {
+      recursive: true,
+      force: true,
+    });
+    await fsPromises.mkdir(toDir, { recursive: true });
+    const copyFiles = await fsPromises.readdir(fromDir, {
+      withFileTypes: true,
+    });
+    for (const file of copyFiles) {
+      if (file.isFile()) {
+        await fsPromises.copyFile(
+          path.join(fromDir, file.name),
+          path.join(toDir, file.name),
+        );
+      } else {
+        await copyDir(
+          path.join(fromDir, file.name),
+          path.join(toDir, file.name),
+        );
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function build(
+  projectDist,
+  templateFile,
+  stylesFolder,
+  styleFile,
+  assetsFrom,
+  assetsTo,
+) {
   try {
     await fsPromises.mkdir(projectDist, { recursive: true });
     const readTemplate = await fsPromises.readFile(templateFile);
@@ -47,9 +85,17 @@ async function build(projectDist, templateFile, stylesFolder, styleFile) {
       }
     }
     await fsPromises.writeFile(styleFile, arrData.join(''));
+    await copyDir(assetsFrom, assetsTo);
   } catch (err) {
     console.error(err);
   }
 }
 
-build(projectDistFolder, templateHTML, styles, styleCSS);
+build(
+  projectDistFolder,
+  templateHTML,
+  styles,
+  styleCSS,
+  assetsDir,
+  newAssetsDir,
+);
