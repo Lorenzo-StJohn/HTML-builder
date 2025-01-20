@@ -80,7 +80,7 @@ async function build(
           const style = await fsPromises.readFile(
             path.join(stylesFolder, file.name),
           );
-          arrData.push(style + '\n');
+          arrData.push(style.toString() + '\n');
         }
       }
     }

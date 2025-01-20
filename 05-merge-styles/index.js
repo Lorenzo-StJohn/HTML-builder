@@ -16,7 +16,7 @@ async function bundle(from, toFile) {
         fileExtension = fileExtension.substring(1).toLowerCase();
         if (fileExtension === 'css') {
           const style = await fsPromises.readFile(path.join(from, file.name));
-          arrData.push(style + '\n');
+          arrData.push(style.toString() + '\n');
         }
       }
     }
