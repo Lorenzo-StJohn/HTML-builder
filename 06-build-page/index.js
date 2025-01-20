@@ -61,7 +61,6 @@ async function build(
         const component = path.join(__dirname, 'components', nameComponent);
         const data = await fsPromises.readFile(component);
         resultHTML += data.toString();
-        resultHTML += '\n';
         start = -1;
       }
     }
