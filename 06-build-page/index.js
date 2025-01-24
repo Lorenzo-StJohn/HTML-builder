@@ -49,7 +49,7 @@ async function build(
     await fsPromises.mkdir(projectDist, { recursive: true });
     const readTemplate = await fsPromises.readFile(templateFile);
     const template = readTemplate.toString();
-    let start;
+    let start = -1;
     let resultHTML = '';
     let last = -2;
     for (let i = 1; i < template.length - 1; i += 1) {
